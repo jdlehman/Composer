@@ -8,6 +8,7 @@ function Composer(config) {
   this.scale = sc.Scale[config.scale]();
 
   this.gainNode = this.webAudioContext.createGainNode();
+  // connect gain node to speaker
   this.gainNode.connect(this.webAudioContext.destination);
 
   this.scaleDegreeProbability = [0.2, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1];//[0.4, 0.05, 0.025, 0.2, 0.3, 0.1, 0.025];
@@ -21,9 +22,15 @@ function Composer(config) {
 Composer.prototype.RHYTHM_TYPES = [4, 2, 1, 0.5, 0.25];
 
 Composer.prototype.addInstrument = function(config) {
+  //TODO: move to shared object
   config.webAudioContext = this.webAudioContext;
   config.outputNode = this.gainNode;
   config.scale = this.scale;
+  config.key = this.key;
+  config.tempo = this.tempo;
+  config.beatsPerMeasure = this.beatsPerMeasure;
+  config.scaleDegreeProbability = this.scaleDegreeProbability;
+  config.rhythmProbability = this.rhythmProbability;
   var instrument = new Instrument(config);
   this.instruments.push(instrument);
   return instrument;
@@ -56,26 +63,6 @@ Composer.prototype.scheduleMeasure = function() {
 
   this.instruments.forEach(function(instrument) {
     var time = startTime;
-    var beatsLeft = self.beatsPerMeasure;
-    while(beatsLeft) {
-      // choose weighted note type
-      var noteType = self.RHYTHM_TYPES.wchoose(self.rhythmProbability);
-      if(noteType <= beatsLeft) {
-        // choose scale degree by weighted random
-        var note = self.scale.degrees().wchoose(self.scaleDegreeProbability);
-        var noteLength = noteType * (self.tempo / 60);
-
-        //TODO: make the root genreation smooth, should only move an octave at most between
-        var root = 60;//Math.floor((Math.random() * (108 - 21) + 21) / 12) * 12 + key; // numbers because of piano 21 to 108 midi
-        var freq =  self.scale.degreeToFreq(self.scale.at(note), (root).midicps(), 1);
-        instrument.playNote(freq, time, noteLength);
-
-        beatsLeft -= noteType;
-        time += noteLength;
-      }
-    }
+    instrument.scheduleMeasure(time);
   });
 };
-
-
-//set gain
