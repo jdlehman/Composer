@@ -2,10 +2,7 @@ function Composer(config) {
   this.webAudioContext = WebAudioContext();
 
   // from config
-  this.key = config.key;
-  this.tempo = config.tempo;
-  this.beatsPerMeasure = config.beatsPerMeasure;
-  this.scale = sc.Scale[config.scale]();
+  this.musicSettings = new MusicSettings(config);
 
   this.gainNode = this.webAudioContext.createGainNode();
   // connect gain node to speaker
@@ -18,19 +15,18 @@ function Composer(config) {
   this.instruments = [];
 }
 
-// whole, half, quarter, eight, sixteenth
-Composer.prototype.RHYTHM_TYPES = [4, 2, 1, 0.5, 0.25];
+// attr must be capitalized ex(Scale, BeatsPerMeasure etc)
+Composer.prototype.set = function(attr, val) {
+  this.musicSettings['set' + attr](val);
+};
 
 Composer.prototype.addInstrument = function(config) {
-  //TODO: move to shared object
   config.webAudioContext = this.webAudioContext;
   config.outputNode = this.gainNode;
-  config.scale = this.scale;
-  config.key = this.key;
-  config.tempo = this.tempo;
-  config.beatsPerMeasure = this.beatsPerMeasure;
   config.scaleDegreeProbability = this.scaleDegreeProbability;
   config.rhythmProbability = this.rhythmProbability;
+  config.musicSettings = this.musicSettings;
+
   var instrument = new Instrument(config);
   this.instruments.push(instrument);
   return instrument;
@@ -50,7 +46,7 @@ Composer.prototype.play = function() {
     else {
       clearInterval(self.interval);
     }
-  }, this.tempo / 60 * this.beatsPerMeasure * 1000);
+  }, this.musicSettings.tempo / 60 * this.musicSettings.beatsPerMeasure * 1000);
 };
 
 Composer.prototype.stop = function() {

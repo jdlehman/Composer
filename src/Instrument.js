@@ -1,12 +1,9 @@
 function Instrument(config) {
   this.webAudioContext = config.webAudioContext;
   this.outputNode = config.outputNode; 
-  this.scale = config.scale;
-  this.key = config.key;
-  this.tempo = config.tempo;
-  this.beatsPerMeasure = config.beatsPerMeasure;
   this.scaleDegreeProbability = config.scaleDegreeProbability;
   this.rhythmProbability = config.rhythmProbability;
+  this.musicSettings = config.musicSettings;
 
   this.oscillatorType = config.oscType;
   this.playType = 'playNote';
@@ -16,7 +13,7 @@ function Instrument(config) {
 Instrument.prototype.RHYTHM_TYPES = [4, 2, 1, 0.5, 0.25];
 
 Instrument.prototype.playNote = function(root, note, startingTime, noteLength) {
-  var frequency = this.scale.degreeToFreq(this.scale.at(note), (root).midicps(), 1);
+  var frequency = this.musicSettings.scale.degreeToFreq(this.musicSettings.scale.at(note), (root).midicps(), 1);
   var oscillator = this.webAudioContext.createOscillator();
   oscillator.connect(this.outputNode);
   oscillator.frequency.value = frequency;
@@ -39,14 +36,14 @@ Instrument.prototype.playChord = function(root, note, startingTime, noteLength, 
 };
 
 Instrument.prototype.scheduleMeasure = function(time) {
-  var beatsLeft = this.beatsPerMeasure;
+  var beatsLeft = this.musicSettings.beatsPerMeasure;
   while(beatsLeft) {
     // choose weighted note type
-    var noteType = this.RHYTHM_TYPES.wchoose(this.rhythmProbability);
+    var noteType = this.musicSettings.RHYTHM_TYPES.wchoose(this.rhythmProbability);
     if(noteType <= beatsLeft) {
       // choose scale degree by weighted random
-      var note = this.scale.degrees().wchoose(this.scaleDegreeProbability);
-      var noteLength = noteType * (this.tempo / 60);
+      var note = this.musicSettings.scale.degrees().wchoose(this.scaleDegreeProbability);
+      var noteLength = noteType * (this.musicSettings.tempo / 60);
 
       //TODO: make the root genreation smooth, should only move an octave at most between
       var root = 60;//Math.floor((Math.random() * (108 - 21) + 21) / 12) * 12 + key; // numbers because of piano 21 to 108 midi
