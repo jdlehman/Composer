@@ -1,0 +1,14 @@
+{
+  "name": "composer",
+  "version": "0.0.0",
+  "devDependencies": {
+    "gulp": "~3.6.0",
+    "karma": "~0.12.4",
+    "gulp-karma": "0.0.4",
+    "karma-jasmine": "~0.1.5",
+    "karma-chrome-launcher": "~0.1.3"
+  },
+  "dependencies": {
+    "subcollider": "~0.1.0"
+  }
+}
