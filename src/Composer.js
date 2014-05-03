@@ -6,7 +6,6 @@ var Composer = (function() {
     this.scaleDegreeProbability = [0.2, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1];//[0.4, 0.05, 0.025, 0.2, 0.3, 0.1, 0.025];
     this.rhythmProbability = [0.2, 0.2, 0.2, 0.2, 0.2];//[0.2, 0.3, 0.3, 0.1, 0.1];
 
-    this.playing = false;
     this.instruments = [];
   }
 
@@ -27,13 +26,13 @@ var Composer = (function() {
 
   Composer.prototype.play = function() {
     // prevent playing more than once
-    if(this.playing) { return; }
+    if(this.musicSettings.isPlaying) { return; }
 
     var self = this;
-    this.playing = true;
+    this.musicSettings.isPlaying = true;
     this.scheduleMeasure();
     this.interval = setInterval(function() {
-      if(self.playing) {
+      if(self.musicSettings.isPlaying) {
         self.scheduleMeasure();
       }
       else {
@@ -43,7 +42,7 @@ var Composer = (function() {
   };
 
   Composer.prototype.stop = function() {
-    this.playing = false;
+    this.musicSettings.isPlaying = false;
   };
 
   Composer.prototype.scheduleMeasure = function() {

@@ -6,6 +6,7 @@ var Instrument = (function() {
 
     this.oscillatorType = config.oscType;
     this.playType = 'playNote';
+    this.useArpeggio = false;
     this.queue = [];
   }
 
@@ -19,14 +20,14 @@ var Instrument = (function() {
     oscillator.stop(startingTime + noteLength);
   };
 
-  Instrument.prototype.playChord = function(root, note, startingTime, noteLength, useArpeggio) {
-    if(useArpeggio) {
-      this.playNote(root, note, startingTime + noteLength, noteLength);
+  Instrument.prototype.playChord = function(root, note, startingTime, noteLength) {
+    this.playNote(root, note, startingTime, noteLength);
+
+    if(this.useArpeggio) {
       this.playNote(root, note + 2, startingTime + noteLength / 4, noteLength - noteLength / 4);
       this.playNote(root, note + 4, startingTime + noteLength / 2, noteLength - noteLength / 2);
     }
     else {
-      this.playNote(root, note, startingTime, noteLength);
       this.playNote(root, note + 2, startingTime, noteLength);
       this.playNote(root, note + 4, startingTime, noteLength);
     }
@@ -44,7 +45,7 @@ var Instrument = (function() {
 
         //TODO: make the root genreation smooth, should only move an octave at most between
         var root = 60;//Math.floor((Math.random() * (108 - 21) + 21) / 12) * 12 + key; // numbers because of piano 21 to 108 midi
-        this[this.playType](root, note, time, noteLength, false);
+         this[this.playType](root, note, time, noteLength);
 
         beatsLeft -= noteType;
         time += noteLength;

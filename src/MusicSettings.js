@@ -6,6 +6,7 @@ var MusicSettings = (function() {
     this.beatsPerMeasure = config.beatsPerMeasure;
     this.scale = sc.Scale[config.scale]();
 
+    this.isPlaying = false;
     this.webAudioContext = WebAudioContext();
     this.outputNode = this.webAudioContext.createGainNode();
     //connect gain node to speaker
