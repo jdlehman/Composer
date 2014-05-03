@@ -1,19 +1,18 @@
 var Instrument = (function() {
   function Instrument(config) {
-    this.webAudioContext = config.webAudioContext;
-    this.outputNode = config.outputNode; 
     this.scaleDegreeProbability = config.scaleDegreeProbability;
     this.rhythmProbability = config.rhythmProbability;
     this.musicSettings = config.musicSettings;
 
     this.oscillatorType = config.oscType;
     this.playType = 'playNote';
+    this.queue = [];
   }
 
   Instrument.prototype.playNote = function(root, note, startingTime, noteLength) {
     var frequency = this.musicSettings.scale.degreeToFreq(this.musicSettings.scale.at(note), (root).midicps(), 1);
-    var oscillator = this.webAudioContext.createOscillator();
-    oscillator.connect(this.outputNode);
+    var oscillator = this.musicSettings.webAudioContext.createOscillator();
+    oscillator.connect(this.musicSettings.outputNode);
     oscillator.frequency.value = frequency;
     oscillator.type = oscillator[this.oscillatorType];
     oscillator.start(startingTime);

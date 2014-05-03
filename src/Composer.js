@@ -1,13 +1,7 @@
 var Composer = (function() {
   function Composer(config) {
-    this.webAudioContext = WebAudioContext();
-
     // from config
     this.musicSettings = new MusicSettings(config);
-
-    this.gainNode = this.webAudioContext.createGainNode();
-    // connect gain node to speaker
-    this.gainNode.connect(this.webAudioContext.destination);
 
     this.scaleDegreeProbability = [0.2, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1];//[0.4, 0.05, 0.025, 0.2, 0.3, 0.1, 0.025];
     this.rhythmProbability = [0.2, 0.2, 0.2, 0.2, 0.2];//[0.2, 0.3, 0.3, 0.1, 0.1];
@@ -22,8 +16,6 @@ var Composer = (function() {
   };
 
   Composer.prototype.addInstrument = function(config) {
-    config.webAudioContext = this.webAudioContext;
-    config.outputNode = this.gainNode;
     config.scaleDegreeProbability = this.scaleDegreeProbability;
     config.rhythmProbability = this.rhythmProbability;
     config.musicSettings = this.musicSettings;
@@ -56,7 +48,7 @@ var Composer = (function() {
 
   Composer.prototype.scheduleMeasure = function() {
     var self = this;
-    var startTime = this.webAudioContext.currentTime;
+    var startTime = this.musicSettings.webAudioContext.currentTime;
 
     this.instruments.forEach(function(instrument) {
       var time = startTime;

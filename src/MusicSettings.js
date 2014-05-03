@@ -5,6 +5,11 @@ var MusicSettings = (function() {
     this.tempo = config.tempo;
     this.beatsPerMeasure = config.beatsPerMeasure;
     this.scale = sc.Scale[config.scale]();
+
+    this.webAudioContext = WebAudioContext();
+    this.outputNode = this.webAudioContext.createGainNode();
+    //connect gain node to speaker
+    this.outputNode.connect(this.webAudioContext.destination);
   };
 
   // whole, half, quarter, eight, sixteenth
